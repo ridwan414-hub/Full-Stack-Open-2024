@@ -3,26 +3,39 @@ import Filter from './components/Filter';
 import PersonForm from './components/PersonForm';
 import Persons from './components/Persons';
 import axios from 'axios';
+import personService from './services/personService';
+import Notification from './components/Notification';
 
 const App = () => {
-  const [persons, setPersons] = useState([ ]);
+  const [persons, setPersons] = useState([]);
+    const [errorMessage, setErrorMessage] = useState('some error happened...');
+  
+
   useEffect(() => {
-    axios.get('http://localhost:3002/persons').then((response) => {
-    setPersons(response.data);
-    });
+    personService
+      .getAll()
+    .then(initialPersons =>setPersons(initialPersons))
   }, []);
-  // console.log('render', data.length, 'notes');
+
+
+
+
+
 
   return (
     <div>
       <h1>Phonebook</h1>
-      <Filter
-        persons={persons}
-        setPersons={setPersons}
-      ></Filter>
+      <Notification message={errorMessage} />
+      <Filter persons={persons} setPersons={setPersons}></Filter>
 
       <h2>Add a new</h2>
-      <PersonForm persons={persons} setPersons={setPersons}></PersonForm>
+      <PersonForm
+        persons={persons}
+        setPersons={setPersons}
+        setErrorMessage={setErrorMessage}
+        // setNewNumber={setNewNumber}
+        // setNewName={setNewName}
+      ></PersonForm>
 
       <h2>Numbers</h2>
 
@@ -30,8 +43,11 @@ const App = () => {
         <Persons
           key={person.id}
           name={person.name}
-          setPersons={setPersons}
           number={person.number}
+          id={person.id}
+          persons={persons}
+          setPersons={setPersons}
+          setErrorMessage={setErrorMessage}
         ></Persons>
       ))}
     </div>
