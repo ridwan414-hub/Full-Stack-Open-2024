@@ -4,14 +4,13 @@ const cors = require('cors')
 const app = express()
 
 app.use(express.json())
-app.use(cors())
 app.use(morgan(
     'METHOD: :method - URL: :url - STATUS: :status - RESPONSE TIME: :response-time[3] ms - POSTED DATA: :postData'
-))
-morgan.token('postData', function (request) {
-    return JSON.stringify(request.body)
-})
-let persons =
+    ))
+    morgan.token('postData', function (request) {
+        return JSON.stringify(request.body)
+    })
+    let persons =
     [
         {
             "id": 1,
@@ -34,8 +33,9 @@ let persons =
             "number": "39-23-6423122"
         }
     ]
-
-app.get('/', (request, response) => {
+app.use(express.static('dist'))
+    app.use(cors())
+    app.get('/', (request, response) => {
     response.send('<h1>Hello World!</h1>')
 })
 app.get('/info', (request, response) => {
@@ -52,6 +52,8 @@ app.post('/api/persons', (request, response) => {
         number: body.number
     }
     const matchingName = persons.filter(p => p.name === newPerson.name);
+    console.log(matchingName);
+
     if (newPerson.name && newPerson.number) {
         if (matchingName.length>0) {
             return response.status(400).json({
@@ -85,6 +87,18 @@ app.get('/api/persons/:id', (request, response) => {
         response.status(404).end();
     }
 })
+app.put(`/api/persons/:id`, (request, response) => {
+    console.log(request.body.number);
+    const newNumber = request.body.number;
+    return response.json({
+        message : "someone want to put"
+    })
+
+
+})
+
+
+
 app.delete('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id)
     persons = persons.filter(person => person.id !== id)
