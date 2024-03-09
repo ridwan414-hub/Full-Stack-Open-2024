@@ -7,7 +7,7 @@ import personService from './services/personService';
 import Notification from './components/Notification';
 
 const App = () => {
-  const [persons, setPersons] = useState([]);
+  const [persons, setPersons] = useState(null);
     const [errorMessage, setErrorMessage] = useState('some error happened...');
   
 
@@ -17,7 +17,10 @@ const App = () => {
     .then(initialPersons =>setPersons(initialPersons))
   }, []);
 
-
+ if (!persons) {
+   return null;
+ }
+  console.log('frontend',persons);
 
 
 

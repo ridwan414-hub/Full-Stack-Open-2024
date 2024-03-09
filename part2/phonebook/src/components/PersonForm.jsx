@@ -12,7 +12,6 @@ const PersonForm = (props) => {
     event.preventDefault();
 
     const personsObject = {
-      id: `${persons.length + 1}`,
       name: newName,
       number: newNumber,
     };
@@ -26,7 +25,7 @@ const PersonForm = (props) => {
       personService
         .create(personsObject)
         .then((returnedPerson) => {
-          setPersons(persons.concat(returnedPerson));
+          setPersons(returnedPerson);
           setErrorMessage(`'${newName}' added to the server`);
           setTimeout(() => {
             setErrorMessage(null);

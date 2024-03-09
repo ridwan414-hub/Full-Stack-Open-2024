@@ -1,8 +1,10 @@
 const express = require('express')
-const app = express()
 var morgan = require('morgan')
+const cors = require('cors')
+const app = express()
+
 app.use(express.json())
-// app.use(morgan('tiny'))
+app.use(cors())
 app.use(morgan(
     'METHOD: :method - URL: :url - STATUS: :status - RESPONSE TIME: :response-time[3] ms - POSTED DATA: :postData'
 ))
@@ -40,12 +42,9 @@ app.get('/info', (request, response) => {
     const date = new Date();
     response.send(`<p>Phonebook has info for ${persons.length} people </p><br><p> ${date} </p>`);
 })
-app.get('/api/persons', (request, response) => {
-    response.json(persons)
-})
 app.post('/api/persons', (request, response) => {
     const body = request.body;
-
+    
     const newPersonId = parseInt(Math.random() * 1000);
     const newPerson = {
         id: newPersonId,
@@ -54,12 +53,13 @@ app.post('/api/persons', (request, response) => {
     }
     const matchingName = persons.filter(p => p.name === newPerson.name);
     if (newPerson.name && newPerson.number) {
-        if (matchingName) {
+        if (matchingName.length>0) {
             return response.status(400).json({
                 error:'name must be unique'
             })
         }
         else (persons = persons.concat(newPerson))
+        console.log('in backend',persons);
     }
     else {
         return response.status(400).json({
@@ -69,6 +69,9 @@ app.post('/api/persons', (request, response) => {
     response.json(persons);
 })
 
+app.get('/api/persons', (request, response) => {
+    response.json(persons)
+})
 
 
 app.get('/api/persons/:id', (request, response) => {
@@ -87,7 +90,7 @@ app.delete('/api/persons/:id', (request, response) => {
     persons = persons.filter(person => person.id !== id)
     response.status(204).end()
 })
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })
