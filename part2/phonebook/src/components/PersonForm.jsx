@@ -25,7 +25,7 @@ const PersonForm = (props) => {
       personService
         .create(personsObject)
         .then((returnedPerson) => {
-          setPersons(returnedPerson);
+          setPersons(persons.concat(returnedPerson));
           setErrorMessage(`'${newName}' added to the server`);
           setTimeout(() => {
             setErrorMessage(null);

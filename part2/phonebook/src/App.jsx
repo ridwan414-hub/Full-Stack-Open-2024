@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import Filter from './components/Filter';
 import PersonForm from './components/PersonForm';
 import Persons from './components/Persons';
-import axios from 'axios';
 import personService from './services/personService';
 import Notification from './components/Notification';
 
@@ -11,15 +10,15 @@ const App = () => {
     const [errorMessage, setErrorMessage] = useState('some error happened...');
   
 
-  useEffect(() => {
+useEffect(() => {
     personService
       .getAll()
     .then(initialPersons =>setPersons(initialPersons))
-  }, []);
+}, []);
 
- if (!persons) {
+if (!persons) {
    return null;
- }
+}
   console.log('frontend',persons);
 
 
