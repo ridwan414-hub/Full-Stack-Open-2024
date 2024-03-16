@@ -1,0 +1,57 @@
+/* eslint-disable @stylistic/js/linebreak-style */
+const { MONGODB_URI } =require('./utils/config')
+const express = require('express')
+const app = express()
+const cors = require('cors')
+const blogsRouter = require('./controllers/blogs')
+const middlware = require('./utils/middleware')
+const logger = require('./utils/logger')
+const mongoose = require('mongoose')
+
+mongoose.set('strictQuery', false)
+logger.info('connecting to',MONGODB_URI)
+mongoose.connect(MONGODB_URI)
+  .then(() => { logger.info('Connected to MONGODB') })
+  .catch((error) => {
+    logger.error('Failed to connect to MONGODB: ', error.message)
+  })
+
+app.use(cors())
+app.use(express.json())
+app.use(middlware.requestLogger)
+
+app.get('/', (request, response) => {
+  response.send('<h1>Hello World!</h1>')
+})
+app.use('/api/blogs', blogsRouter)
+
+app.use(middlware.unknownEndpoint)
+app.use(middlware.errorHandler)
+
+module.exports = app
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+module.exports =app
