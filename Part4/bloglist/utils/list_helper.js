@@ -57,7 +57,7 @@ const mostlikes = (blogs) => {
   return ({ author: mostLikedAuthor, likes: mostLikesCounts })
 }
 
-module.exports = { dummy, totalLikes, favoriteBlog ,mostBlogs, mostlikes }
+module.exports = { dummy, totalLikes, favoriteBlog, mostBlogs, mostlikes }
 
 
 
