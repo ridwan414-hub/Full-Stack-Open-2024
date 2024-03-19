@@ -1,5 +1,5 @@
 /* eslint-disable @stylistic/js/linebreak-style */
-const { MONGODB_URI } =require('./utils/config')
+const { MONGODB_URI_2 } =require('./utils/config')
 const express = require('express')
 const app = express()
 const cors = require('cors')
@@ -9,8 +9,8 @@ const logger = require('./utils/logger')
 const mongoose = require('mongoose')
 
 mongoose.set('strictQuery', false)
-logger.info('connecting to',MONGODB_URI)
-mongoose.connect(MONGODB_URI)
+logger.info('connecting to',MONGODB_URI_2)
+mongoose.connect(MONGODB_URI_2)
   .then(() => { logger.info('Connected to MONGODB') })
   .catch((error) => {
     logger.error('Failed to connect to MONGODB: ', error.message)
