@@ -2,6 +2,8 @@
   "name": "bloglist",
   "version": "1.0.0",
   "description": "",
+  "author": "",
+  "license": "ISC",
   "main": "index.js",
   "scripts": {
     "start": "cross-env NODE_ENV=production node index.js",
@@ -9,8 +11,6 @@
     "test": "cross-env  NODE_ENV=test node --test",
     "lint": "eslint ."
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",

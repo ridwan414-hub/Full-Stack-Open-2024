@@ -52,8 +52,6 @@ const blogs = [
     __v: 0
   }
 ]
-
-
 describe('Dummy Tests', () => {
   test('dummy returns one', () => {
     const blogs = []

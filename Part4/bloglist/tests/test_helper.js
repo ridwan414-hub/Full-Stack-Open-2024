@@ -29,10 +29,22 @@ const blogWithoutLikes = {
   author: 'Edsger W. Dijkstra',
   url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html'
 }
+const blogWithoutTitleAndUrl = {
+  title: 'patterns',
+  author: 'Michael Chan',
+  likes: 7
+}
+const updatedBlog = {
+  id: '5a422a851b54a676234d17f7',
+  title: 'React patterns',
+  author: 'Michael Chan',
+  url: 'https://reactpatterns.com/',
+  likes: 678
+}
 
 const blogsInDB = async () => {
   const blogs = await Blog.find({})
   return blogs.map(blog => blog.toJSON())
 }
 
-module.exports  = { blogsInDB , initialBlogs ,newBlog,blogWithoutLikes }
+module.exports  = { blogsInDB , initialBlogs ,newBlog ,blogWithoutLikes ,blogWithoutTitleAndUrl ,updatedBlog}
