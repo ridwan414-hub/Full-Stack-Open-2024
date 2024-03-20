@@ -1,6 +1,7 @@
 /* eslint-disable @stylistic/js/linebreak-style */
 const { MONGODB_URI_2 } =require('./utils/config')
 const express = require('express')
+require('express-async-errors')
 const app = express()
 const cors = require('cors')
 const blogsRouter = require('./controllers/blogs')
