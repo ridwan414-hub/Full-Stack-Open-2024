@@ -1,7 +1,5 @@
 /* eslint-disable @stylistic/js/linebreak-style */
-const { test, describe, beforeEach, after } = require('node:test')
 const mongoose = require('mongoose')
-const assert = require('assert')
 const supertest = require('supertest')
 const app = require('../app')
 const User = require('../models/user')
@@ -17,7 +15,7 @@ describe('when there is initially one user in db', () => {
     const user = new User({ username: 'Ridwan414', passwordHash })
 
     await user.save()
-  })
+  }, 100000)
 
   test('creation succeeds with a fresh username', async () => {
     const usersAtStart = await usersInDB()
@@ -35,10 +33,10 @@ describe('when there is initially one user in db', () => {
       .expect('Content-Type', /application\/json/)
 
     const usersAtEnd = await usersInDB()
-    assert.strictEqual(usersAtEnd.length, usersAtStart.length + 1)
-
     const usernames = usersAtEnd.map(u => u.username)
-    assert(usernames.includes(newUser.username))
+    expect(usersAtEnd.length).toBe(usersAtStart.length + 1)
+    expect(usernames).toContain(newUser.username)
+
   })
   test('creation fails with proper statuscode and message if username already taken', async () => {
     const usersAtStart = await usersInDB()
@@ -56,11 +54,11 @@ describe('when there is initially one user in db', () => {
       .expect('Content-Type', /application\/json/)
 
     const usersAtEnd = await usersInDB()
-    assert(result.body.error.includes('expected `username` to be unique'))
+    expect(result.body.error).toContain('expected `username` to be unique')
+    expect(usersAtEnd.length).toBe(usersAtStart.length)
 
-    assert.strictEqual(usersAtEnd.length, usersAtStart.length)
   })
-  test('creation fails with proper statuscode and message if username and password is less than 3', async () => {
+  test('creation fails with proper statuscode and message if username is less than 3', async () => {
     const usersAtStart = await usersInDB()
 
     const newUser = {
@@ -76,14 +74,31 @@ describe('when there is initially one user in db', () => {
       .expect('Content-Type', /application\/json/)
 
     const usersAtEnd = await usersInDB()
-    console.log(result.body.error)
-    assert(result.body.error.includes('Password is too short' &&' Path `username` (`R`) is shorter than the minimum allowed length (3).'))
+    expect(result.body.error).toContain('Path `username` (`R`) is shorter than the minimum allowed length (3).')
+    expect(usersAtEnd.length).toBe(usersAtStart.length)
+  })
+  test('creation fails with proper statuscode and message if password is less than 3', async () => {
+    const usersAtStart = await usersInDB()
 
-    assert.strictEqual(usersAtEnd.length, usersAtStart.length)
+    const newUser = {
+      username: 'Rttggg',
+      name: 'Superuser',
+      password: '66',
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await usersInDB()
+    expect(result.body.error).toContain('Password is too short')
+    expect(usersAtEnd.length).toBe(usersAtStart.length)
   })
 })
 
 
-after(async () => {
+afterAll(async () => {
   await mongoose.connection.close()
 })

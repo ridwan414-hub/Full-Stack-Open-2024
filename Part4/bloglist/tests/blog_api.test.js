@@ -1,7 +1,5 @@
 /* eslint-disable @stylistic/js/linebreak-style */
 /* eslint-disable @stylistic/js/indent */
-const { test, after, beforeEach, describe } = require('node:test')
-const assert = require('assert')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
@@ -58,12 +56,12 @@ describe('when there is initially some blogs saved', () => {
     })
     test('Data length is correct', async () => {
       const response = await api.get('/api/blogs')
-      assert.strictEqual(response.body.length, 2)
+      expect(response.body.length).toBe(2)
     })
-    test('Is ID field defined as `id` insted of `_id`', async () => {
+    test('Is ID field defined as id insted of _id', async () => {
       const response = await api
         .get('/api/blogs')
-      assert(response.body[0]._id === undefined)
+      expect(response.body[0]._id).toBeUndefined()
     })
     test('Without likes is 0', async () => {
       const user = {
@@ -79,9 +77,10 @@ describe('when there is initially some blogs saved', () => {
         .expect(201)
         .set('Authorization', `Bearer ${loginUser.body.token}`)
       const blogsAtEnd = await blogsInDB()
-      assert.strictEqual(blogsAtEnd.length, initialBlogs.length + 1)
       const likeLikes = blogsAtEnd.map(n => n.likes)
-      assert(likeLikes.includes(0))
+      expect(blogsAtEnd.length).toBe(initialBlogs.length + 1)
+      expect(likeLikes).toContain(0)
+
     })
     test('without title and url gives error', async () => {
       const user = {
@@ -97,8 +96,9 @@ describe('when there is initially some blogs saved', () => {
         .set('Authorization', `Bearer ${loginUser.body.token}`)
         .expect(400)
       const blogsAtEnd = await blogsInDB()
-      assert.strictEqual(blogsAtEnd.length, initialBlogs.length)
-    })
+      expect(blogsAtEnd.length).toBe(initialBlogs.length)
+
+    },100000)
   })
   describe('Adding Blogs', () => {
     test('POST request creates a new blog post', async () => {
@@ -115,9 +115,10 @@ describe('when there is initially some blogs saved', () => {
         .set('Authorization', `Bearer ${loginUser.body.token}`)
         .expect(201)
       const blogsAtEnd = await blogsInDB()
-      assert.strictEqual(blogsAtEnd.length, initialBlogs.length + 1)
       const title = blogsAtEnd.map(n => n.title)
-      assert(title.includes('patterns'))
+      expect(blogsAtEnd.length).toBe(initialBlogs.length + 1)
+      expect(title).toContain('patterns')
+
     })
   })
   describe('Deleting a Blog', () => {
@@ -142,7 +143,7 @@ describe('when there is initially some blogs saved', () => {
         .set('Authorization', `Bearer ${loginUser.body.token}`)
 
       const blogsAtEnd = await blogsInDB()
-      assert.strictEqual(blogsAtEnd.length, initialBlogs.length - 1)
+      expect(blogsAtEnd.length).toBe(initialBlogs.length - 1)
     })
   })
   describe('Updating a Blog', () => {
@@ -154,14 +155,14 @@ describe('when there is initially some blogs saved', () => {
         .send(updatedBlog)
         .expect(201)
       const blogsAtEnd = await blogsInDB()
-      assert.strictEqual(blogsAtEnd.length, initialBlogs.length)
       const newLikes = blogsAtEnd.map(r => r.likes)
-      assert(newLikes.includes(updatedBlog.likes))
+      expect(blogsAtEnd.length).toBe(initialBlogs.length)
+      expect(newLikes).toContain(updatedBlog.likes)
     })
   })
 })
 
 
-after(async () => {
+afterAll(async () => {
   await mongoose.connection.close()
 })

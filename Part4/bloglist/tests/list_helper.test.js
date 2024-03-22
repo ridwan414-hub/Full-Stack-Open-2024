@@ -1,6 +1,4 @@
 /* eslint-disable @stylistic/js/linebreak-style */
-const { test, describe } = require('node:test')
-const assert = require('node:assert')
 const listHelper = require('../utils/list_helper')
 const blogs = [
   {
@@ -52,14 +50,13 @@ const blogs = [
     __v: 0
   }
 ]
-describe('Dummy Tests', () => {
-  test('dummy returns one', () => {
-    const blogs = []
+test('dummy returns one', () => {
+  const blogs = []
 
-    const result = listHelper.dummy(blogs)
-    assert.strictEqual(result, 1)
-  })
-
+  const result = listHelper.dummy(blogs)
+  expect(result).toBe(1)
+})
+describe('Total Likes', () => {
   const listWithOneBlog = [
     {
       _id: '5a422aa71b54a676234d17f8',
@@ -73,10 +70,13 @@ describe('Dummy Tests', () => {
 
   test('when list has only one blog, equals the likes of that', () => {
     const result = listHelper.totalLikes(listWithOneBlog)
-    assert.strictEqual(result, 5)
+    expect(result).toBe(5)
   })
+})
 
 
+
+describe('Favourite Blog', () => {
   const fb = {
     title: 'Canonical string reduction',
     author: 'Edsger W. Dijkstra',
@@ -84,26 +84,26 @@ describe('Dummy Tests', () => {
   }
   test('favourite blog among all the blogs finding..', () => {
     const result = listHelper.favoriteBlog(blogs)
-    assert.deepEqual(result, fb)
+    expect(result).toEqual(fb)
   })
-
-
+})
+describe('Most Blogs', () => {
   const mb = {
     author: 'Robert C. Martin',
     blogs: 3
   }
   test('Top Blogger with his blog counts..', () => {
     const result = listHelper.mostBlogs(blogs)
-    assert.deepEqual(result, mb)
+    expect(result).toEqual(mb)
   })
-
-
+})
+describe('Most liked Blogger', () => {
   const mlb = {
     author: 'Edsger W. Dijkstra',
     likes: 17
   }
   test('Most Liked Blogger with is likesCount', () => {
     const result = listHelper.mostlikes(blogs)
-    assert.deepEqual(result, mlb)
+    expect(result).toEqual(mlb)
   })
 })
