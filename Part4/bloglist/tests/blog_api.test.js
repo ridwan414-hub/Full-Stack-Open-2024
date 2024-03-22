@@ -131,16 +131,16 @@ describe('when there is initially some blogs saved', () => {
       const loginUser = await api
         .post('/api/login')
         .send(user)
-      
-      
+
+
         const blogsAtStart = await blogsInDB()
         const blogToDelete = blogsAtStart[0]
-      
+
       await api
         .delete(`/api/blogs/${blogToDelete.id}`)
         .expect(204)
         .set('Authorization', `Bearer ${loginUser.body.token}`)
-      
+
       const blogsAtEnd = await blogsInDB()
       assert.strictEqual(blogsAtEnd.length, initialBlogs.length - 1)
     })
