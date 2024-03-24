@@ -1,22 +1,24 @@
-import React, { useState } from 'react';
+/* eslint-disable linebreak-style */
+import PropTypes from 'prop-types'
+import React, { useState } from 'react'
 
-const BlogForm = ({createNewBlog}) => {
-  const [newTitle,setNewTitle] = useState('')
-  const [newAuthor,setNewAuthor] = useState('')
-  const [newUrl,setNewUrl] = useState('')
-  
+const BlogForm = ({ createNewBlog }) => {
+  const [newTitle, setNewTitle] = useState('')
+  const [newAuthor, setNewAuthor] = useState('')
+  const [newUrl, setNewUrl] = useState('')
+
   const handleCreate = (event) => {
-    event.preventDefault();
-      createNewBlog({
+    event.preventDefault()
+    createNewBlog({
       title: newTitle,
       author: newAuthor,
-      url: newUrl
+      url: newUrl,
     })
-      setNewAuthor('')
-      setNewTitle('')
-      setNewUrl('')
-  } 
-  
+    setNewAuthor('')
+    setNewTitle('')
+    setNewUrl('')
+  }
+
   return (
     <div>
       <h2>create new</h2>
@@ -27,7 +29,7 @@ const BlogForm = ({createNewBlog}) => {
             type="text"
             value={newTitle}
             onChange={({ target }) => {
-              setNewTitle(target.value);
+              setNewTitle(target.value)
             }}
           />
         </div>
@@ -37,7 +39,7 @@ const BlogForm = ({createNewBlog}) => {
             type="text"
             value={newAuthor}
             onChange={({ target }) => {
-              setNewAuthor(target.value);
+              setNewAuthor(target.value)
             }}
           />
         </div>
@@ -47,14 +49,16 @@ const BlogForm = ({createNewBlog}) => {
             type="text"
             value={newUrl}
             onChange={({ target }) => {
-              setNewUrl(target.value);
+              setNewUrl(target.value)
             }}
           />
         </div>
         <button type="submit">Create</button>
       </form>
     </div>
-  );
-};
-
-export default BlogForm;
+  )
+}
+BlogForm.protoType={
+  createNewBlog:PropTypes.func.isRequired
+}
+export default BlogForm

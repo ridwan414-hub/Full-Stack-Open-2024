@@ -1,4 +1,6 @@
-import { useState } from "react";
+/* eslint-disable linebreak-style */
+import PropTypes from 'prop-types'
+import { useState } from 'react'
 const blogStyle = {
   background:'yellow',
   paddingTop: 10,
@@ -6,26 +8,25 @@ const blogStyle = {
   border: 'solid',
   borderWidth: 1,
   marginBottom: 5,
-};
-const buttonStyle = {
-background:'blue'
 }
-const Blog = ({ blog, updateLikedBlog, deleteBlog,user}) => {
-  const [visibility, setVisibility] = useState(false);
-  const hideWhenVisible = { display: visibility ? 'none' : '' };
-  const showWhenVisible = { display: visibility ? '' : 'none' };
+const buttonStyle = {
+  background:'blue'
+}
+const Blog = ({ blog, updateLikedBlog, deleteBlog,user }) => {
+  const [visibility, setVisibility] = useState(false)
+  const hideWhenVisible = { display: visibility ? 'none' : '' }
+  const showWhenVisible = { display: visibility ? '' : 'none' }
 
   const handleView = () => {
-    setVisibility(!visibility);
-  };
+    setVisibility(!visibility)
+  }
   const handleLike = () => {
-    blog.likes = blog.likes + 1;
-    const likedBlogObject = blog;
-    updateLikedBlog(likedBlogObject);
-  };
+    blog.likes = blog.likes + 1
+    const likedBlogObject = blog
+    updateLikedBlog(likedBlogObject)
+  }
   const logic = (user.username === blog.user.username)
-  console.log(logic)
-  const handleRemove=()=>deleteBlog(blog)
+  const handleRemove=() => deleteBlog(blog)
 
   return (
     <div style={blogStyle}>
@@ -45,12 +46,18 @@ const Blog = ({ blog, updateLikedBlog, deleteBlog,user}) => {
           </div>
           <div>{blog.author}</div>
           {
-(logic)?<button style={buttonStyle} onClick={handleRemove}>remove</button>:''
+            (logic)?<button style={buttonStyle} onClick={handleRemove}>remove</button>:''
           }
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
+Blog.propTypes = {
+  blog: PropTypes.object.isRequired,
+  updateLikedBlog: PropTypes.func.isRequired,
+  deleteBlog: PropTypes.func.isRequired,
+  user: PropTypes.object.isRequired
+}
 
-export default Blog;
+export default Blog
