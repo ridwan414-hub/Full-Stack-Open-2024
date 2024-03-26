@@ -22,9 +22,9 @@ const Notification = ({ successMessage, errorMessage }) => {
   if (errorMessage === null && successMessage === null) {
     return null
   } else if (successMessage) {
-    return <div style={success}>{successMessage}</div>
-  } else {
-    return <div style={error}>{errorMessage}</div>
+    return <div id='success' style={success}>{successMessage}</div>
+  } else if(errorMessage) {
+    return <div id='error' style={error}>{errorMessage}</div>
   }
 }
 Notification.propType = {

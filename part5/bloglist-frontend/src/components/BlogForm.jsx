@@ -26,37 +26,43 @@ const BlogForm = ({ createNewBlog }) => {
         <div>
           title:
           <input
+            id='title'
             type="text"
             value={newTitle}
             onChange={({ target }) => {
-              setNewTitle(target.value)
+              setNewTitle(target.value);
             }}
+            placeholder="write title here"
           />
         </div>
         <div>
           author:
           <input
+            id='author'
             type="text"
             value={newAuthor}
             onChange={({ target }) => {
-              setNewAuthor(target.value)
+              setNewAuthor(target.value);
             }}
+            placeholder="write author here"
           />
         </div>
         <div>
           url:
           <input
+            id='url'
             type="text"
             value={newUrl}
             onChange={({ target }) => {
-              setNewUrl(target.value)
+              setNewUrl(target.value);
             }}
+            placeholder='write url here'
           />
         </div>
         <button type="submit">Create</button>
       </form>
     </div>
-  )
+  );
 }
 BlogForm.protoType={
   createNewBlog:PropTypes.func.isRequired

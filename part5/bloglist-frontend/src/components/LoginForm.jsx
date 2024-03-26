@@ -15,6 +15,7 @@ function LoginForm({
           <div>
               username
             <input
+              id='username'
               type="text"
               name="Username"
               value={username}
@@ -26,6 +27,7 @@ function LoginForm({
           <div>
               password
             <input
+              id='password'
               type="password"
               name="Password"
               value={password}
@@ -34,7 +36,7 @@ function LoginForm({
               }}
             />
           </div>
-          <button type="submit">Login</button>
+          <button id='login-button' type="submit">Login</button>
         </form>
       </div>
     </div>
