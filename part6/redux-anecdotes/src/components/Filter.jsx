@@ -8,6 +8,7 @@ const Filter = () => {
   };
   const style = {
     marginBottom: 10,
+    marginTop: 10
   };
 
   return (
