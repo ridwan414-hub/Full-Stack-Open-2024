@@ -5,10 +5,10 @@ import { setNotification } from '../reducers/notificationReducer';
 const AnecdoteForm = () => {
     const dispatch = useDispatch()
      
-    const createAnecdote = (e) => {
+    const createAnecdote = async(e) => {
        e.preventDefault();
        const content = e.target.data.value;
-       e.target.data.value = '';
+      e.target.data.value = '';
       dispatch(createAnecdotes(content));
       dispatch(setNotification(`you added ${content}`, 5));
      };
