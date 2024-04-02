@@ -1,5 +1,9 @@
+/* eslint-disable react/no-unescaped-entities */
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import { useState } from 'react';
 import { Link, Route, Routes, useMatch, useNavigate } from 'react-router-dom';
+import { useField } from './hooks';
 const Menu = () => {
   const padding = {
     paddingRight: 5,
@@ -77,20 +81,29 @@ const Footer = () => (
 );
 
 const CreateNew = (props) => {
-  const navigate = useNavigate()
-  const [content, setContent] = useState('');
-  const [author, setAuthor] = useState('');
-  const [info, setInfo] = useState('');
+  const navigate = useNavigate();
+  // const [content, setContent] = useState('');
+  // const [author, setAuthor] = useState('');
+  // const [info, setInfo] = useState('');
 
+  const [content,resetContent] = useField('text');
+  const [author,resetAuthor] = useField('text');
+  const [info,resetInfo] = useField('text');
   const handleSubmit = (e) => {
+    console.log(e.type);
     e.preventDefault();
     props.addNew({
-      content: content,
-      author: author,
-      info: info,
+      content: content.value,
+      author: author.value,
+      info: info.value,
       votes: 0,
     });
-    navigate('/')
+    navigate('/');
+  };
+  const handleReset = () => {
+    resetAuthor();
+    resetContent();
+    resetInfo();
   };
 
   return (
@@ -99,29 +112,20 @@ const CreateNew = (props) => {
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input
-            name="content"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-          />
+          <input {...content} />
         </div>
         <div>
           author
-          <input
-            name="author"
-            value={author}
-            onChange={(e) => setAuthor(e.target.value)}
-          />
+          <input {...author} />
         </div>
         <div>
           url for more info
-          <input
-            name="info"
-            value={info}
-            onChange={(e) => setInfo(e.target.value)}
-          />
+          <input {...info} />
         </div>
-        <button>create</button>
+        <button type="submit">create</button>
+        <button type="reset" onClick={handleReset}>
+          reset
+        </button>
       </form>
     </div>
   );
@@ -150,10 +154,9 @@ const App = () => {
   const addNew = (anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000);
     setAnecdotes(anecdotes.concat(anecdote));
-    setNotification(
-      `a new anecdote '${anecdote.content}' created !`)
+    setNotification(`a new anecdote '${anecdote.content}' created !`);
     setTimeout(() => {
-      setNotification('')
+      setNotification('');
     }, 5000);
   };
 
@@ -170,18 +173,25 @@ const App = () => {
     setAnecdotes(anecdotes.map((a) => (a.id === id ? voted : a)));
   };
 
-
   const match = useMatch('/anecdotes/:id');
   const anecdote = match
     ? anecdotes.find((a) => a.id === Number(match.params.id))
     : null;
-  
-  
+
   return (
     <div>
       <h1>Software anecdotes</h1>
       <Menu />
-      <div style={{backgroundColor:"gray",color:'green',margin:'5px',fontSize:'35px' }}>{notification}</div>
+      <div
+        style={{
+          backgroundColor: 'gray',
+          color: 'green',
+          margin: '5px',
+          fontSize: '35px',
+        }}
+      >
+        {notification}
+      </div>
       <Routes>
         <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
         <Route
