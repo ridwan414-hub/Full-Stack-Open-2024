@@ -2,10 +2,10 @@
 const mongoose = require('mongoose')
 
 const userSchema = new mongoose.Schema({
-  blogs:[
+  blogs: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref:'Blog'
+      ref: 'Blog'
     }
   ],
   username: {
