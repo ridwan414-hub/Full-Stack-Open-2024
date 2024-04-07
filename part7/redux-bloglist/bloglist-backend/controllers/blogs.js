@@ -1,16 +1,18 @@
 /* eslint-disable @stylistic/js/linebreak-style */
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
+const Comment = require('../models/comment')
 
-blogsRouter.get('/',async(request, response) => {
+blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog
     .find({})
-    .populate('user', { username: 1, name: 1 })
+    .populate('user', { username: 1, name: 1, id: 1 })
+    .populate('comments', { content: 1 })
   response.status(200).json(blogs)
 })
 
 blogsRouter.get('/:id', async (request, response) => {
-  const searchedBlog = await Blog.findById(request.params.id)
+  const searchedBlog = await Blog.findById(request.params.id).populate('comments', { content: 1 }).populate('user', { username: 1, name: 1 })
   if (searchedBlog) {
     response.status(202).json(searchedBlog)
   } else {
@@ -18,10 +20,10 @@ blogsRouter.get('/:id', async (request, response) => {
   }
 })
 
-blogsRouter.post('/',async (request, response) => {
+blogsRouter.post('/', async (request, response) => {
   const body = request.body
+  console.log(body)
   const user = request.user
-
   if (!user) {
     return response.status(401).json({ error: 'token missing or invalid' })
   }
@@ -29,16 +31,14 @@ blogsRouter.post('/',async (request, response) => {
     title: body.title,
     author: body.author,
     url: body.url,
-    user:user.id,
-    likes: body.likes
+    likes: body.likes ? body.likes : 0,
+    user: user.id,
+    comments: body.content ? body.content : [], 
   })
   if (!blog.title || !blog.url) {
     response.status(400).end()
   }
   else {
-    if (!blog.likes) {
-      blog.likes = 0
-    }
     const savedBlog = await blog.save()
     user.blogs = user.blogs.concat(savedBlog._id)
     await user.save()

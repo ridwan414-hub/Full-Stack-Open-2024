@@ -1,7 +1,10 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable linebreak-style */
+// eslint-disable-next-line no-unused-vars
+import React from 'react';
 import PropTypes from 'prop-types'
 import { forwardRef, useImperativeHandle, useState } from 'react'
-
+import {Button} from 'react-bootstrap'
 const Toggleable = forwardRef((props, refs) => {
   const [visible, setVisible] = useState(false)
 
@@ -21,7 +24,7 @@ const Toggleable = forwardRef((props, refs) => {
   return (
     <div>
       <div style={hideWhenVisible}>
-        <button onClick={toggleVisibility}>{props.buttonLabel}</button>
+        <Button variant='dark' onClick={toggleVisibility}>{props.buttonLabel}</Button>
       </div>
       <div style={showWhenVisible}>
         {props.children}
@@ -35,3 +38,7 @@ Toggleable.propTypes = {
   buttonLabel: PropTypes.string.isRequired,
 }
 export default Toggleable
+      // const BlogsFormRef = useRef();
+      // <Toggleable buttonLabel="new note" ref={BlogsFormRef}>
+      //   <BlogForm></BlogForm>
+      // </Toggleable>;

@@ -1,9 +1,13 @@
 import { useDispatch } from 'react-redux';
 import { createBlog } from '../reducers/blogReducer';
+import Toggleable from './Toggleable';
+import { useRef } from 'react';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 
 const BlogForm = () => {
   const dispatch = useDispatch();
-
+  const formRef = useRef();
   const handleCreate = (e) => {
     e.preventDefault();
     const newTitle = e.target.t.value;
@@ -22,22 +26,24 @@ const BlogForm = () => {
 
   return (
     <div>
-      <h2>create new</h2>
-      <form onSubmit={handleCreate}>
-        <div>
-          title:
-          <input name="t" placeholder="write title here" />
-        </div>
-        <div>
-          author:
-          <input name="a" placeholder="write author here" />
-        </div>
-        <div>
-          url:
-          <input name="u" placeholder="write url here" />
-        </div>
-        <button type="submit">Create</button>
-      </form>
+      <Toggleable buttonLabel="create new blog" ref={formRef} onc>
+        <Form onSubmit={handleCreate}>
+          <Form.Group className="mb-3">
+            <Form.Label>Title</Form.Label>
+            <Form.Control type="text" name="t" placeholder="type title" />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Author</Form.Label>
+            <Form.Control type="text" name="a" placeholder="type author name" />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Url</Form.Label>
+            <Form.Control type="text" name="u" placeholder="type url" />
+          </Form.Group>
+
+          <Button type="submit">Create</Button>
+        </Form>
+      </Toggleable>
     </div>
   );
 };

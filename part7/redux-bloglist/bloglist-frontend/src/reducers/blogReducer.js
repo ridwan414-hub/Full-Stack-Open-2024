@@ -1,8 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 import blogService from "../services/blogs";
+import { setSuccessNotification } from "./notificationReducer";
 const blogSlice = createSlice({
     name: 'blogs',
-    initialState: [],
+    initialState: null,
     reducers: {
         setBlogs(state, action) {
             return action.payload
@@ -11,15 +12,12 @@ const blogSlice = createSlice({
             state.push(action.payload)
         },
         deletingBlog(state, action) {
-            state.filter((blog) => blog.id !== action.payload.id)
+            const newState = state.filter((blog) => blog.id !== action.payload)
+            return newState
         },
-        likingBlog(state, action) { 
+        likingBlog(state, action) {
             const id = action.payload.id
-            const blogToChange = state.find(blog => blog.id === id)
-            const likedBlog = {
-                ...blogToChange,
-                votes: blogToChange.likes + 1
-            }
+            const likedBlog = action.payload
             return state.map(blog =>
                 blog.id !== id ? blog : likedBlog
             )
@@ -29,7 +27,7 @@ const blogSlice = createSlice({
     }
 })
 
-export const { setBlogs, appendBlogs,likingBlog,deletingBlog } = blogSlice.actions
+export const { setBlogs, appendBlogs, likingBlog, deletingBlog } = blogSlice.actions
 
 export const initializeBlogs = () => {
     return async dispatch => {
@@ -37,23 +35,34 @@ export const initializeBlogs = () => {
         dispatch(setBlogs(blogs))
     }
 }
-export const createBlog = (newBlog) => { 
+export const createBlog = (newBlog) => {
     return async dispatch => {
-        const createdBlog = await blogService.create(newBlog)
-        dispatch(appendBlogs(createdBlog))
+        try {
+            const createdBlog = await blogService.create(newBlog)
+            dispatch(appendBlogs(createdBlog))
+            dispatch(setSuccessNotification('your Created the blog', 2))
+        } catch (err) { 
+            console.error(err)
+            dispatch(setSuccessNotification('To create blog Log in first', 5))
+        }
     }
 }
 export const likeBlogs = (blog) => {
     return async dispatch => {
         const updatedBlog = await blogService.update(blog)
+        console.log(updatedBlog)
         dispatch(likingBlog(updatedBlog))
+        dispatch(setSuccessNotification('your liked the blog', 2))
     }
 }
 export const deleteBlog = (blog) => {
-    return async dispatch => { 
-        const deletedBlog = await blogService.remove(blog.id)
-        console.log(deletedBlog)
-        dispatch(deletingBlog(deletedBlog))
+    return async dispatch => {
+        try {
+            await blogService.remove(blog.id)
+            dispatch(deletingBlog(blog.id))
+        } catch (error) {
+            console.log(error)
+        }
     }
 }
 

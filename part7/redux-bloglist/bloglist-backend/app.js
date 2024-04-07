@@ -7,6 +7,7 @@ const logger = require('./utils/logger')
 const usersRouter = require('./controllers/users')
 const blogsRouter = require('./controllers/blogs')
 const loginRouter = require('./controllers/login')
+const commentsRouter = require('./controllers/comments')
 const mongoose = require('mongoose')
 const middlware = require('./utils/middleware')
 
@@ -23,6 +24,7 @@ app.use(cors())
 app.use(express.json())
 app.use(middlware.requestLogger)
 app.use(middlware.tokenExtractor)
+app.use(middlware.userExtractor)
 
 app.get('/', (request, response) => {
     response.send('<h1>Hello World!</h1>')
@@ -30,7 +32,8 @@ app.get('/', (request, response) => {
 
 app.use('/api/login', loginRouter)
 app.use('/api/users', usersRouter)
-app.use('/api/blogs', middlware.userExtractor, blogsRouter)
+app.use('/api/blogs', blogsRouter)
+app.use('/api/blogs', commentsRouter)
 
 
 app.use(middlware.unknownEndpoint)

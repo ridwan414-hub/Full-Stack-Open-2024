@@ -1,36 +1,56 @@
 /* eslint-disable linebreak-style */
-import { useEffect, useRef } from 'react';
-import BlogForm from './components/BlogForm';
-import Toggleable from './components/Toggleable';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { initializeBlogs } from './reducers/blogReducer';
+import { initializeAllUsers } from './reducers/userReducer';
+import { initializeLoggedInUser } from './reducers/loginReducer';
+import Menu from './components/Menu';
+import Users from './components/Users';
 import Blogs from './components/Blogs';
-import { initializeUser, logOut } from './reducers/loginReducer';
 import LoginForm from './components/LoginForm';
+import UserBloglist from './components/UserBloglist';
+import BlogDetails from './components/BlogDetails';
+import Notification from './components/Notification';
+import { Page } from './styleRoom/style';
+import Container from 'react-bootstrap/Container';
+import SignUpForm from './components/SignUpForm';
+// import Menu2 from './components/Menu2';
 
 const App = () => {
   const dispatch = useDispatch();
-  const BlogsFormRef = useRef();
   useEffect(() => {
     dispatch(initializeBlogs());
-    dispatch(initializeUser());
+    dispatch(initializeLoggedInUser());
+    dispatch(initializeAllUsers());
   }, [dispatch]);
-  const user = useSelector((state) => state.loggedInUser);
-  console.log(user);
+  const loggedInUser = useSelector((state) => state.loggedInUser);
   return (
-    <div>
-      {
-        (user===null)
-        ? <LoginForm></LoginForm>
-        : <h1>{user.username} logged in</h1>
-      }
-      <button onClick={() => dispatch(logOut())}>logout</button>
-      <Toggleable buttonLabel="new note" ref={BlogsFormRef}>
-        <BlogForm></BlogForm>
-      </Toggleable>
-
-      <Blogs></Blogs>
-    </div>
+    <Page>
+      <Notification />
+      <Container>
+        <Menu />
+        {/* <Menu2/> */}
+        <Routes>
+          <Route path="/" element={<Blogs />}></Route>
+          <Route path="/blogs" element={<Blogs />}></Route>
+          <Route path="/blogs/:id" element={<BlogDetails />}></Route>
+          <Route path="/users" element={<Users />}></Route>
+          <Route path="/users/:id" element={<UserBloglist />}></Route>
+          <Route path="/signup" element={<SignUpForm />}></Route>
+          <Route
+            path="/login"
+            element={
+              loggedInUser === null ? (
+                <LoginForm />
+              ) : (
+                <Navigate replace to="/login" />
+              )
+            }
+          ></Route>
+        </Routes>
+      </Container>
+    </Page>
   );
 };
 
