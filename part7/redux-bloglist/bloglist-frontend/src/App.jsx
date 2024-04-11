@@ -44,7 +44,7 @@ const App = () => {
               loggedInUser === null ? (
                 <LoginForm />
               ) : (
-                <Navigate replace to="/login" />
+                <Navigate replace to="/" />
               )
             }
           ></Route>
