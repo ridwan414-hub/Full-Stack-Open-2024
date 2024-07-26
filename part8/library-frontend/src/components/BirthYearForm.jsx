@@ -7,11 +7,17 @@ const BirthYearForm = ({ authors }) => {
   const [name, setName] = useState('');
   const [born, setBorn] = useState('');
   const [editAuthor] = useMutation(EDIT_AUTHOR, {
-    refetchQueries: [{ query: ALL_AUTHORS }],
+    update: (cache, response) => {
+      cache.updateQuery({ query: ALL_AUTHORS }, ({ allAuthors }) => {
+        return {
+          allAuthors: allAuthors.concat(response.data.editAuthor),
+        };
+      });
+    },
   });
   const handleSubmit = (e) => {
     e.preventDefault();
-    editAuthor({ variables: { name, setBornTo: Number(born) } });
+    editAuthor({ variables: { name, born: Number(born) } });
     setBorn('');
     setName('');
   };

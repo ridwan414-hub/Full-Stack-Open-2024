@@ -10,7 +10,22 @@ const NewBook = (props) => {
   const [genre, setGenre] = useState('');
   const [genres, setGenres] = useState([]);
   const [createBook] = useMutation(CREATE_BOOK, {
-    refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
+    onError: (error) => {
+      const messages = error.graphQLErrors.map((e) => e.message).join('\n');
+      props.setError(messages);
+    },
+    update: (cache, response) => {
+      cache.updateQuery({ query: ALL_BOOKS }, ({ allBooks }) => {
+        return {
+          allBooks: allBooks.concat(response.data.addBook),
+        };
+      });
+      cache.updateQuery({ query: ALL_AUTHORS }, ({ allAuthors }) => {
+        return {
+          allAuthors: allAuthors.concat(response.data.addBook.author),
+        };
+      });
+    },
   });
   if (!props.show) {
     return null;
@@ -75,5 +90,6 @@ const NewBook = (props) => {
 };
 NewBook.propTypes = {
   show: PropTypes.bool.isRequired,
+  setError: PropTypes.func.isRequired,
 };
 export default NewBook;

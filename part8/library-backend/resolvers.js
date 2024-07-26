@@ -9,14 +9,15 @@ const resolvers = {
         bookCount: async () => Book.collection.countDocuments(),
         authorCount: async () => Author.collection.countDocuments(),
         allAuthors: async () => { return await Author.find({}) },
+        me: async (root, args, { currentUser }) => currentUser,
         allBooks: async (root, args) => {
             const foundAuthor = await Author.findOne({ name: args.author })
 
             if (args.author && args.genres) {
-                return await Book.find({ author: foundAuthor.id, genres: { $in: args.genres } }).populate('author')
+                return await Book.find({ author: foundAuthor._id, genres: { $in: args.genres } }).populate('author')
             }
             else if (args.author) {
-                return await Book.find({ author: foundAuthor.id }).populate('author')
+                return await Book.find({ author: foundAuthor._id }).populate('author')
             }
             else if (args.genres) {
                 return await Book.find({ genres: { $in: args.genres } }).populate('author')
@@ -102,12 +103,12 @@ const resolvers = {
                 return author
             }
         },
-        createUser: async (root, arg) => {
-            const user = new User({ username: arg.username })
+        createUser: async (root, args) => {
+            const user = new User({ username: args.username, favoriteGenre: args.favoriteGenre })
             try {
                 await user.save()
             } catch (error) {
-                throw new GraphQLError('saving user failed', {
+                throw new GraphQLError('Creating user failed', {
                     extensions: {
                         code: 'BAD_USER_INPUT',
                         invalidArgs: arg.username,

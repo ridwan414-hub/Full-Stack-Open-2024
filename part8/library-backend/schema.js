@@ -1,6 +1,7 @@
 const typeDefs = `
   type User {
     username: String!
+    favoriteGenre: String
     id: ID!
   }    
   type Token {
@@ -23,7 +24,7 @@ const typeDefs = `
   type Query {
     bookCount: Int!,
     authorCount: Int!,
-    allBooks(author: String,genre: String): [Book!]!,
+    allBooks(author: String,genres: String): [Book!]!,
     allAuthors: [Author!]!
     me: User
     }
@@ -43,6 +44,7 @@ const typeDefs = `
 
     createUser(
       username: String!
+      favoriteGenre: String!
     ): User
 
     login(
