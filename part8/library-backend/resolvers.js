@@ -11,7 +11,7 @@ const resolvers = {
     Query: {
         bookCount: async () => Book.collection.countDocuments(),
         authorCount: async () => Author.collection.countDocuments(),
-        allAuthors: async () => { return await Author.find({}) },
+        allAuthors: async () => { return Author.find({}) },
         me: async (root, args, { currentUser }) => currentUser,
         allBooks: async (root, args) => {
             const foundAuthor = await Author.findOne({ name: args.author })

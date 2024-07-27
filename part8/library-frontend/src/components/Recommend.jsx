@@ -6,8 +6,18 @@ const Recommend = ({ show, books }) => {
   const loggedInUser = useQuery(LOGGEDIN_USER);
   const user = loggedInUser.data ? loggedInUser.data.me : null;
   const favoriteGenre = user ? user.favoriteGenre : null;
+
   if (!show) {
     return null;
+  }
+  if (!favoriteGenre) {
+    return <div>Genre loading...</div>;
+  }
+  if (!books) {
+    return <div>Books loading...</div>;
+  }
+  if (user === null) {
+    return <div>User loading...</div>;
   }
 
   const filteredBook = books.filter((book) =>

@@ -1,12 +1,13 @@
 import { PropTypes } from 'prop-types';
 import { useEffect, useState } from 'react';
-import { useApolloClient, useQuery } from '@apollo/client';
-import { ALL_AUTHORS, ALL_BOOKS } from './queries';
+import { useApolloClient, useQuery, useSubscription } from '@apollo/client';
+import { ALL_AUTHORS, ALL_BOOKS, AUTHOR_EDITED, BOOK_ADDED } from './queries';
 import Authors from './components/Authors';
 import Books from './components/Books';
 import NewBook from './components/NewBook';
 import LoginForm from './components/LoginForm';
 import Recommend from './components/Recommend';
+import { updateAuthorsCache, updateBooksCache } from './utils/updateCache';
 
 const App = () => {
   const [page, setPage] = useState('authors');
@@ -15,6 +16,26 @@ const App = () => {
   const client = useApolloClient();
   const authors = useQuery(ALL_AUTHORS);
   const books = useQuery(ALL_BOOKS);
+
+  useSubscription(BOOK_ADDED, {
+    onData: ({ data, client }) => {
+      const addedBook = data.data.bookAdded;
+      notify(`${addedBook.title} added`);
+      updateBooksCache(client.cache, addedBook);
+    },
+  });
+  useSubscription(AUTHOR_EDITED, {
+    onData: ({ data, client }) => {
+      const editedAuthor = data.data.authorEdited;
+      notify(`${editedAuthor.name}'s birth year edited`);
+      updateAuthorsCache(client.cache, editedAuthor);
+    },
+  });
+
+  useEffect(() => {
+    const localKey = localStorage.getItem('library-user-token');
+    localKey && setToken(localKey);
+  }, []);
 
   const logout = () => {
     setToken(null);
@@ -27,10 +48,7 @@ const App = () => {
       setErrorMessage(null);
     }, 10000);
   };
-  useEffect(() => {
-    const localKey = localStorage.getItem('library-user-token');
-    localKey && setToken(localKey);
-  }, []);
+
   if (authors.loading || books.loading) {
     return <div>loading...</div>;
   }
@@ -54,7 +72,7 @@ const App = () => {
       <Authors
         authors={authors.data.allAuthors}
         show={page === 'authors'}
-        authenticated={token}
+        setError={notify}
       />
 
       <Books books={books.data.allBooks} show={page === 'books'} />

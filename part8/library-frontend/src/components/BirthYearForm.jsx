@@ -1,18 +1,19 @@
 import { PropTypes } from 'prop-types';
 import { useState } from 'react';
-import { ALL_AUTHORS, EDIT_AUTHOR } from '../queries';
+import { EDIT_AUTHOR } from '../queries';
 import { useMutation } from '@apollo/client';
+import { updateAuthorsCache } from '../utils/updateCache';
 
-const BirthYearForm = ({ authors }) => {
+const BirthYearForm = ({ authors, setError }) => {
   const [name, setName] = useState('');
   const [born, setBorn] = useState('');
   const [editAuthor] = useMutation(EDIT_AUTHOR, {
+    onError: (error) => {
+      setError(error.graphQLErrors[0].message);
+    },
     update: (cache, response) => {
-      cache.updateQuery({ query: ALL_AUTHORS }, ({ allAuthors }) => {
-        return {
-          allAuthors: allAuthors.concat(response.data.editAuthor),
-        };
-      });
+      const editedAuthor = response.data.editAuthor;
+      updateAuthorsCache(cache, editedAuthor);
     },
   });
   const handleSubmit = (e) => {
@@ -50,5 +51,6 @@ const BirthYearForm = ({ authors }) => {
 };
 BirthYearForm.propTypes = {
   authors: PropTypes.array.isRequired,
+  setError: PropTypes.func.isRequired,
 };
 export default BirthYearForm;

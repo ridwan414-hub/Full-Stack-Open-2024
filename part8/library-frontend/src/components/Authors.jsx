@@ -29,7 +29,9 @@ const Authors = (props) => {
           </tbody>
         </table>
       </div>
-      {authenticated ? <BirthYearForm authors={authors} /> : null}
+      {authenticated ? (
+        <BirthYearForm authors={authors} setError={props.setError} />
+      ) : null}
     </>
   );
 };
@@ -37,6 +39,7 @@ const Authors = (props) => {
 Authors.propTypes = {
   show: PropTypes.bool.isRequired,
   authors: PropTypes.array.isRequired,
+  setError: PropTypes.func.isRequired,
 };
 
 export default Authors;

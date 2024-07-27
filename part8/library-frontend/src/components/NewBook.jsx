@@ -2,7 +2,9 @@ import { PropTypes } from 'prop-types';
 import { useState } from 'react';
 import { ALL_AUTHORS, ALL_BOOKS, CREATE_BOOK } from '../queries';
 import { useMutation, useQuery } from '@apollo/client';
+import { updateBooksCache } from '../utils/updateCache';
 import Books from './Books';
+
 const NewBook = (props) => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
@@ -13,23 +15,17 @@ const NewBook = (props) => {
   const books = useQuery(ALL_BOOKS);
 
   const [createBook] = useMutation(CREATE_BOOK, {
+    refetchQueries: [{ query: ALL_AUTHORS }],
     onError: (error) => {
       const messages = error.graphQLErrors.map((e) => e.message).join('\n');
       props.setError(messages);
     },
-    update: (cache, response) => {
-      cache.updateQuery({ query: ALL_BOOKS }, ({ allBooks }) => {
-        return {
-          allBooks: allBooks.concat(response.data.addBook),
-        };
-      });
-      cache.updateQuery({ query: ALL_AUTHORS }, ({ allAuthors }) => {
-        return {
-          allAuthors: allAuthors.concat(response.data.addBook.author),
-        };
-      });
+    update: async (cache, response) => {
+      const addedBook = response.data.bookAdded;
+      updateBooksCache(cache, addedBook);
     },
   });
+
   if (!props.show) {
     return null;
   }
