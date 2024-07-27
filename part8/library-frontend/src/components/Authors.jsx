@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import BirthYearForm from './BirthYearForm';
 
 const Authors = (props) => {
+  const authenticated = localStorage.getItem('library-user-token');
   if (!props.show) {
     return null;
   }
@@ -28,7 +29,7 @@ const Authors = (props) => {
           </tbody>
         </table>
       </div>
-      <BirthYearForm authors={authors} />
+      {authenticated ? <BirthYearForm authors={authors} /> : null}
     </>
   );
 };

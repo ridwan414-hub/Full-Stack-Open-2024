@@ -3,23 +3,26 @@ const typeDefs = `
     username: String!
     favoriteGenre: String
     id: ID!
-  }    
+  }
+       
   type Token {
     value: String!
   }
+
   type Author{
     name: String!
     id: ID!
     born: Int
     bookCount: Int!
-    }
+  }
+
   type Book{
       title: String!
       published: Int!
       author: Author!
       id: ID!
       genres: [String!]!
-      }
+  }
 
   type Query {
     bookCount: Int!,
@@ -27,7 +30,7 @@ const typeDefs = `
     allBooks(author: String,genres: String): [Book!]!,
     allAuthors: [Author!]!
     me: User
-    }
+  }
 
   type Mutation {
     addBook(
@@ -35,7 +38,7 @@ const typeDefs = `
       published: Int!
       author: String!
       genres: [String!]!
-     ): Book,
+    ): Book,
     
     editAuthor(
         name: String!
@@ -52,7 +55,12 @@ const typeDefs = `
       password: String!
     ): Token
     
-    }
+  }
+  
+  type Subscription {
+    bookAdded: Book!
+    authorEdited: Author!
+  }
 `
 
 module.exports = typeDefs

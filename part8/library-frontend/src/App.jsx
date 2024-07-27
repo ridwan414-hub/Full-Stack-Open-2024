@@ -1,7 +1,7 @@
 import { PropTypes } from 'prop-types';
 import { useEffect, useState } from 'react';
 import { useApolloClient, useQuery } from '@apollo/client';
-import { ALL_AUTHORS, ALL_BOOKS, LOGGEDIN_USER } from './queries';
+import { ALL_AUTHORS, ALL_BOOKS } from './queries';
 import Authors from './components/Authors';
 import Books from './components/Books';
 import NewBook from './components/NewBook';
@@ -15,7 +15,6 @@ const App = () => {
   const client = useApolloClient();
   const authors = useQuery(ALL_AUTHORS);
   const books = useQuery(ALL_BOOKS);
-  const user = useQuery(LOGGEDIN_USER);
 
   const logout = () => {
     setToken(null);
@@ -52,22 +51,21 @@ const App = () => {
         )}
       </div>
 
-      <Authors authors={authors.data.allAuthors} show={page === 'authors'} />
+      <Authors
+        authors={authors.data.allAuthors}
+        show={page === 'authors'}
+        authenticated={token}
+      />
 
       <Books books={books.data.allBooks} show={page === 'books'} />
-
+      <NewBook setError={notify} show={page === 'add'} />
+      <Recommend show={page === 'recommend'} books={books.data.allBooks} />
       <LoginForm
         setToken={setToken}
         setPage={setPage}
         setError={notify}
         show={page === 'login'}
       />
-      <Recommend
-        show={page === 'recommend'}
-        user={user.data.me}
-        books={books.data.allBooks}
-      />
-      <NewBook setError={notify} show={page === 'add'} />
     </div>
   );
 };

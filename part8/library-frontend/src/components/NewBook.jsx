@@ -1,14 +1,17 @@
 import { PropTypes } from 'prop-types';
 import { useState } from 'react';
 import { ALL_AUTHORS, ALL_BOOKS, CREATE_BOOK } from '../queries';
-import { useMutation } from '@apollo/client';
-
+import { useMutation, useQuery } from '@apollo/client';
+import Books from './Books';
 const NewBook = (props) => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [published, setPublished] = useState('');
   const [genre, setGenre] = useState('');
   const [genres, setGenres] = useState([]);
+
+  const books = useQuery(ALL_BOOKS);
+
   const [createBook] = useMutation(CREATE_BOOK, {
     onError: (error) => {
       const messages = error.graphQLErrors.map((e) => e.message).join('\n');
@@ -85,6 +88,7 @@ const NewBook = (props) => {
         <div>genres: {genres.join(' ')}</div>
         <button type="submit">create book</button>
       </form>
+      <Books show={props.show} books={books.data.allBooks} />
     </div>
   );
 };

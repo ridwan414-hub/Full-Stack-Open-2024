@@ -1,6 +1,10 @@
+import { useQuery } from '@apollo/client';
 import PropTypes from 'prop-types';
+import { LOGGEDIN_USER } from '../queries';
 
-const Recommend = ({ show, user, books }) => {
+const Recommend = ({ show, books }) => {
+  const loggedInUser = useQuery(LOGGEDIN_USER);
+  const user = loggedInUser.data ? loggedInUser.data.me : null;
   const favoriteGenre = user ? user.favoriteGenre : null;
   if (!show) {
     return null;
@@ -38,7 +42,6 @@ const Recommend = ({ show, user, books }) => {
 
 Recommend.propTypes = {
   show: PropTypes.bool.isRequired,
-  user: PropTypes.object.isRequired,
   books: PropTypes.array.isRequired,
 };
 
