@@ -1,18 +1,20 @@
 const typeDefs = `
+  type Token {
+    value: String!
+  }
+
   type User {
     username: String!
     favoriteGenre: String
     id: ID!
   }
        
-  type Token {
-    value: String!
-  }
 
   type Author{
     name: String!
     id: ID!
     born: Int
+    books: [Book!]!
     bookCount: Int!
   }
 
@@ -28,7 +30,7 @@ const typeDefs = `
     bookCount: Int!,
     authorCount: Int!,
     allBooks(author: String,genres: String): [Book!]!,
-    allAuthors: [Author!]!
+    allAuthors(name:String): [Author!]!
     me: User
   }
 

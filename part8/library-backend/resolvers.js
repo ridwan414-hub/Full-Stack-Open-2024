@@ -11,16 +11,21 @@ const resolvers = {
     Query: {
         bookCount: async () => Book.collection.countDocuments(),
         authorCount: async () => Author.collection.countDocuments(),
-        allAuthors: async () => { return Author.find({}) },
+        allAuthors: async (root, args) => {
+            if (args.name) {
+                return await Author.find({ name: args.name }).populate('books')
+            }
+            return await Author.find({}).populate('books')
+        },
         me: async (root, args, { currentUser }) => currentUser,
         allBooks: async (root, args) => {
             const foundAuthor = await Author.findOne({ name: args.author })
 
             if (args.author && args.genres) {
-                return await Book.find({ author: foundAuthor._id, genres: { $in: args.genres } }).populate('author')
+                return await Book.find({ author: foundAuthor.id, genres: { $in: args.genres } }).populate('author')
             }
             else if (args.author) {
-                return await Book.find({ author: foundAuthor._id }).populate('author')
+                return await Book.find({ author: foundAuthor.id }).populate('author')
             }
             else if (args.genres) {
                 return await Book.find({ genres: { $in: args.genres } }).populate('author')
@@ -31,9 +36,12 @@ const resolvers = {
     },
     Author: {
         bookCount: async (root) => {
-            const foundAuthor = await Author.findOne({ name: root.name })
-            const foundBooks = await Book.find({ author: foundAuthor.id })
+            const foundBooks = await Book.find({ author: root.id })
             return foundBooks.length
+            // return root.books.length
+        },
+        books: async (root) => {
+            return await Book.find({ author: root.id })
         }
     },
     Mutation: {
@@ -49,7 +57,12 @@ const resolvers = {
             if (!existAuthor) {
                 const newAuthor = new Author({ name: args.author, })
                 try {
+                    const book = new Book({ ...args, author: newAuthor.id });
+                    newAuthor.books = newAuthor.books.concat(book.id)
                     await newAuthor.save()
+                    await book.save()
+                    pubsub.publish("BOOK_ADDED", { bookAdded: book });
+                    return book
                 } catch (error) {
                     throw new GraphQLError('saving author failed', {
                         extensions: {
@@ -60,14 +73,13 @@ const resolvers = {
                     })
                 }
             }
-
-            const foundAuthor = await Author.findOne({ name: args.author })
-            const book = new Book({
-                ...args,
-                author: foundAuthor,
-            })
+            const book = new Book({ ...args, author: existAuthor.id });
+            existAuthor.books = existAuthor.books.concat(book.id)
             try {
                 await book.save()
+                await existAuthor.save()
+                pubsub.publish('BOOK_ADDED', { bookAdded: book })
+                return book
             } catch (error) {
                 throw new GraphQLError('saving book failed', {
                     extensions: {
@@ -77,9 +89,6 @@ const resolvers = {
                     }
                 })
             }
-            pubsub.publish('BOOK_ADDED', { bookAdded: book })
-            return book
-
         },
         editAuthor: async (root, args, { currentUser }) => {
             const author = await Author.findOne({ name: args.name })
