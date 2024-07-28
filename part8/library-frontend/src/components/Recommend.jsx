@@ -11,13 +11,13 @@ const Recommend = ({ show, books }) => {
     return null;
   }
   if (!favoriteGenre) {
-    return <div>Genre loading...</div>;
+    return <div className="text-gray-500">Genre loading...</div>;
   }
   if (!books) {
-    return <div>Books loading...</div>;
+    return <div className="text-gray-500">Books loading...</div>;
   }
   if (user === null) {
-    return <div>User loading...</div>;
+    return <div className="text-gray-500">User loading...</div>;
   }
 
   const filteredBook = books.filter((book) =>
@@ -25,23 +25,25 @@ const Recommend = ({ show, books }) => {
   );
 
   return (
-    <div>
-      <h2>Recommendations</h2>
-      <p>
-        books in your favorite genres <strong>{favoriteGenre}</strong>
+    <div className="p-4 text-center">
+      <h2 className="text-2xl font-bold mb-4">Recommendations</h2>
+      <p className="mb-4">
+        Books in your favorite genre: <strong>{favoriteGenre}</strong>
       </p>
-      <table>
-        <tbody>
+      <table className="min-w-full bg-white border border-gray-200">
+        <thead>
           <tr>
-            <th></th>
-            <th>author</th>
-            <th>published</th>
+            <th className="py-2 px-4 border-b">Title</th>
+            <th className="py-2 px-4 border-b">Author</th>
+            <th className="py-2 px-4 border-b">Published</th>
           </tr>
+        </thead>
+        <tbody>
           {filteredBook.map((a) => (
-            <tr key={a.title}>
-              <td>{a.title}</td>
-              <td>{a.author.name}</td>
-              <td>{a.published}</td>
+            <tr key={a.title} className="hover:bg-gray-100">
+              <td className="py-2 px-4 border-b">{a.title}</td>
+              <td className="py-2 px-4 border-b">{a.author.name}</td>
+              <td className="py-2 px-4 border-b">{a.published}</td>
             </tr>
           ))}
         </tbody>

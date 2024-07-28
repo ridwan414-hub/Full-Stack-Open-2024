@@ -1,4 +1,3 @@
-import { PropTypes } from 'prop-types';
 import { useEffect, useState } from 'react';
 import { useApolloClient, useQuery, useSubscription } from '@apollo/client';
 import { ALL_AUTHORS, ALL_BOOKS, AUTHOR_EDITED, BOOK_ADDED } from './queries';
@@ -8,11 +7,15 @@ import NewBook from './components/NewBook';
 import LoginForm from './components/LoginForm';
 import Recommend from './components/Recommend';
 import { updateAuthorsCache, updateBooksCache } from './utils/updateCache';
+import Notify from './components/Notify';
 
 const App = () => {
-  const [page, setPage] = useState('authors');
-  const [errorMessage, setErrorMessage] = useState(null);
+  const [page, setPage] = useState('books');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const [token, setToken] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const client = useApolloClient();
   const authors = useQuery(ALL_AUTHORS);
   const books = useQuery(ALL_BOOKS);
@@ -20,14 +23,14 @@ const App = () => {
   useSubscription(BOOK_ADDED, {
     onData: ({ data, client }) => {
       const addedBook = data.data.bookAdded;
-      notify(`${addedBook.title} added`);
+      setSuccessMessage(`${addedBook.title} added`);
       updateBooksCache(client.cache, addedBook);
     },
   });
   useSubscription(AUTHOR_EDITED, {
     onData: ({ data, client }) => {
       const editedAuthor = data.data.authorEdited;
-      notify(`${editedAuthor.name}'s birth year edited`);
+      setSuccessMessage(`${editedAuthor.name}'s birth year edited`);
       updateAuthorsCache(client.cache, editedAuthor);
     },
   });
@@ -41,61 +44,92 @@ const App = () => {
     setToken(null);
     localStorage.clear();
     client.resetStore();
-  };
-  const notify = (message) => {
-    setErrorMessage(message);
-    setTimeout(() => {
-      setErrorMessage(null);
-    }, 10000);
+    setPage('books');
   };
 
   if (authors.loading || books.loading) {
-    return <div>loading...</div>;
+    return <div className="text-center">loading...</div>;
   }
   return (
-    <div>
-      <Notify errorMessage={errorMessage} />
-      <div>
-        <button onClick={() => setPage('authors')}>authors</button>
-        <button onClick={() => setPage('books')}>books</button>
+    <div className="container mx-auto">
+      <Notify
+        errorMessage={errorMessage}
+        setErrorMessage={setErrorMessage}
+        setSuccessMessage={setSuccessMessage}
+        successMessage={successMessage}
+      />
+      <div className="flex justify-center space-x-4 my-4">
+        <button
+          className={`${
+            page === 'authors' ? 'bg-blue-500' : 'bg-blue-300'
+          } px-4 py-2 rounded`}
+          onClick={() => setPage('authors')}
+        >
+          authors
+        </button>
+        <button
+          className={`${
+            page === 'books' ? 'bg-blue-500' : 'bg-blue-300'
+          } px-4 py-2 rounded`}
+          onClick={() => setPage('books')}
+        >
+          books
+        </button>
         {token ? (
           <>
-            <button onClick={() => setPage('add')}>add book</button>
-            <button onClick={() => setPage('recommend')}>recommend</button>
-            <button onClick={logout}>logout</button>
+            <button
+              className={`${
+                page === 'add' ? 'bg-blue-500' : 'bg-blue-300'
+              } px-4 py-2 rounded`}
+              onClick={() => setIsModalOpen(true)}
+            >
+              add book
+            </button>
+            <button
+              className={`${
+                page === 'recommend' ? 'bg-blue-500' : 'bg-blue-300'
+              } px-4 py-2 rounded`}
+              onClick={() => setPage('recommend')}
+            >
+              recommend
+            </button>
+            <button className="bg-red-500 px-4 py-2 rounded" onClick={logout}>
+              logout
+            </button>
           </>
         ) : (
-          <button onClick={() => setPage('login')}>log in</button>
+          <button
+            className={`${
+              page === 'login' ? 'bg-blue-500' : 'bg-blue-300'
+            } px-4 py-2 rounded`}
+            onClick={() => setPage('login')}
+          >
+            log in
+          </button>
         )}
       </div>
 
       <Authors
         authors={authors.data.allAuthors}
         show={page === 'authors'}
-        setError={notify}
+        setError={setErrorMessage}
       />
 
       <Books books={books.data.allBooks} show={page === 'books'} />
-      <NewBook setError={notify} show={page === 'add'} />
+      <NewBook
+        setError={setErrorMessage}
+        setIsModalOpen={setIsModalOpen}
+        isModalOpen={isModalOpen}
+      />
       <Recommend show={page === 'recommend'} books={books.data.allBooks} />
       <LoginForm
         setToken={setToken}
         setPage={setPage}
-        setError={notify}
+        setError={setErrorMessage}
         show={page === 'login'}
       />
     </div>
   );
-};
-
-const Notify = ({ errorMessage }) => {
-  if (!errorMessage) {
-    return null;
-  }
-  return <div style={{ color: 'red' }}>{errorMessage}</div>;
-};
-Notify.propTypes = {
-  errorMessage: PropTypes.string,
 };
 
 export default App;

@@ -16,19 +16,30 @@ const BirthYearForm = ({ authors, setError }) => {
       updateAuthorsCache(cache, editedAuthor);
     },
   });
+
   const handleSubmit = (e) => {
     e.preventDefault();
     editAuthor({ variables: { name, born: Number(born) } });
     setBorn('');
     setName('');
   };
+
   return (
-    <div>
-      <h2>Set birthyear</h2>
+    <div className="mx-auto bg-white shadow-md rounded-lg p-6 mt-6">
+      <h2 className="text-xl font-bold mb-4">Set Birth Year</h2>
       <form onSubmit={handleSubmit}>
-        <div>
-          name
-          <select value={name} onChange={({ target }) => setName(target.value)}>
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            Name
+          </label>
+          <select
+            value={name}
+            onChange={({ target }) => setName(target.value)}
+            className="block w-full bg-gray-200 border border-gray-200 text-gray-700 py-2 px-3 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+          >
+            <option value="" disabled>
+              Select author
+            </option>
             {authors.map((a) => (
               <option key={a.name} value={a.name}>
                 {a.name}
@@ -36,21 +47,31 @@ const BirthYearForm = ({ authors, setError }) => {
             ))}
           </select>
         </div>
-        <div>
-          born
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            Born
+          </label>
           <input
             type="number"
             value={born}
             onChange={({ target }) => setBorn(target.value)}
+            className="block w-full bg-gray-200 border border-gray-200 text-gray-700 py-2 px-3 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
           />
         </div>
-        <button type="submit">update author</button>
+        <button
+          type="submit"
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        >
+          Update Author
+        </button>
       </form>
     </div>
   );
 };
+
 BirthYearForm.propTypes = {
   authors: PropTypes.array.isRequired,
   setError: PropTypes.func.isRequired,
 };
+
 export default BirthYearForm;

@@ -26,32 +26,44 @@ const LoginForm = ({ setError, setToken, setPage, show }) => {
   if (!show) {
     return null;
   }
-  const submit = async (event) => {
-    event.preventDefault();
 
-    login({ variables: { username, password } });
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    await login({ variables: { username, password } });
   };
 
   return (
-    <div>
-      <h2>Login</h2>
-      <form onSubmit={submit}>
-        <div>
-          username{' '}
+    <div className="max-w-md mx-auto bg-white shadow-md rounded-lg p-6 mt-6">
+      <h2 className="text-2xl text-center font-bold mb-4">Login</h2>
+      <form className="flex flex-col" onSubmit={handleSubmit}>
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            Username
+          </label>
           <input
+            type="text"
             value={username}
             onChange={({ target }) => setUsername(target.value)}
+            className="block w-full bg-gray-200 border border-gray-200 text-gray-700 py-2 px-3 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
           />
         </div>
-        <div>
-          password{' '}
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            Password
+          </label>
           <input
             type="password"
             value={password}
             onChange={({ target }) => setPassword(target.value)}
+            className="block w-full bg-gray-200 border border-gray-200 text-gray-700 py-2 px-3 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
           />
         </div>
-        <button type="submit">login</button>
+        <button
+          type="submit"
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        >
+          Login
+        </button>
       </form>
     </div>
   );

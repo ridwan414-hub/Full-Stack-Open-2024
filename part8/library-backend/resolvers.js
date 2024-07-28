@@ -46,48 +46,69 @@ const resolvers = {
     },
     Mutation: {
         addBook: async (root, args, { currentUser }) => {
-            const existAuthor = await Author.findOne({ name: args.author })
+            console.log('addBook called with args:', args);
+            console.log('currentUser:', currentUser);
+
+            const existAuthor = await Author.findOne({ name: args.author });
+            console.log('existAuthor:', existAuthor);
+
             if (!currentUser) {
                 throw new GraphQLError('not authenticated', {
                     extensions: {
                         code: 'BAD_USER_INPUT',
                     }
-                })
+                });
             }
+
             if (!existAuthor) {
-                const newAuthor = new Author({ name: args.author, })
+                const newAuthor = new Author({ name: args.author });
+                console.log('Creating new author:', newAuthor);
+
                 try {
-                    const book = new Book({ ...args, author: newAuthor.id });
-                    newAuthor.books = newAuthor.books.concat(book.id)
-                    await newAuthor.save()
-                    await book.save()
-                    pubsub.publish("BOOK_ADDED", { bookAdded: book });
-                    return book
+                    const book = new Book({ ...args, author: newAuthor._id });
+                    newAuthor.books = newAuthor.books.concat(book._id);
+                    await newAuthor.save();
+                    await book.save();
+                    const newBook = await Book.findById(book._id).populate('author');
+                    pubsub.publish("BOOK_ADDED", { bookAdded: newBook });
+                    console.log('New book created:', newBook);
+                    return newBook;
                 } catch (error) {
+                    console.error('Error saving new author and book:', error);
                     throw new GraphQLError('saving author failed', {
                         extensions: {
                             code: 'BAD_USER_INPUT',
                             invalidArgs: args,
                             error
                         }
-                    })
+                    });
                 }
-            }
-            const book = new Book({ ...args, author: existAuthor.id });
-            existAuthor.books = existAuthor.books.concat(book.id)
-            try {
-                await book.save()
-                await existAuthor.save()
-                pubsub.publish('BOOK_ADDED', { bookAdded: book })
-                return book
-            } catch (error) {
-                throw new GraphQLError('saving book failed', {
-                    extensions: {
-                        code: 'BAD_USER_INPUT',
-                        invalidArgs: args,
-                        error
+            } else {
+                const book = new Book({ ...args, author: existAuthor._id });
+                existAuthor.books = existAuthor.books.concat(book._id);
+                console.log('Adding book to existing author:', existAuthor);
+
+                try {
+                    // Validate existAuthor before saving
+                    if (!existAuthor._id || !existAuthor.name) {
+                        throw new Error('existAuthor is missing required fields');
                     }
-                })
+                    await book.save();
+                    await existAuthor.save();
+                    const newBook = await Book.findById(book._id).populate('author');
+                    pubsub.publish('BOOK_ADDED', { bookAdded: newBook });
+                    console.log('Book added to existing author:', newBook);
+                    return newBook;
+                } catch (error) {
+                    console.error('Error saving book to existing author:', error);
+                    throw new GraphQLError('saving book failed', {
+                        extensions: {
+                            code: 'BAD_USER_INPUT',
+                            invalidArgs: args,
+                            error
+                        }
+                    });
+                }
             }
         },
         editAuthor: async (root, args, { currentUser }) => {

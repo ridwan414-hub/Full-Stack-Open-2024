@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+  @apply min-h-screen min-w-full; /* Ensure full height and width */
+  margin: 0; /* Remove default margin */
+  padding: 0; /* Remove default padding */
+}
+
+body {
+  @apply bg-gray-200; /* Add a background color */
+  font-family: Arial, sans-serif; /* Modify the font family */
+  font-size: 16px; /* Modify the font size */
+  color: #333; /* Modify the font color */
+}

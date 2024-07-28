@@ -19,7 +19,6 @@ const resolvers = require('./resolvers')
 const { mongoose } = require('mongoose')
 
 connectDB()
-mongoose.set("debug", true);
 
 // setup is now within a function
 const start = async () => {
