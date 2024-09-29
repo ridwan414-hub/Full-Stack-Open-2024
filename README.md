@@ -66,7 +66,9 @@ This repository contains my solutions and projects for the Full Stack Open cours
 
 Each part of the course has its own directory, containing the exercises and projects related to that section:
 
+```
 fullstackopen/
+│
 ├── part1/
 ├── part2/
 ├── part3/
@@ -76,7 +78,7 @@ fullstackopen/
 ├── part7/
 ├── part8/
 └── part9/
-
+```
 
 ## Getting Started
 
