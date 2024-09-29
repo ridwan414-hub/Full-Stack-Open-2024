@@ -26,24 +26,18 @@ export interface BaseEntry {
   description: string;
   date: string;
   specialist: string;
-  
   diagnosisCodes?:Array<DiagnosisEntry["code"]>;
 }
-//entry type enum
-export enum EntryType {
-  HealthCheck = "HealthCheck",
-  OccupationalHealthcare = "OccupationalHealthcare",
-  Hospital = "Hospital",
-}
+
 //health check entry type
 export interface HealthCheckEntry extends BaseEntry {
-  type: EntryType.HealthCheck;
+  type: "HealthCheck";
   healthCheckRating: HealthCheckRating;
 }
 
 //hospital entry type
 export interface HospitalEntry extends BaseEntry {
-  type: EntryType.Hospital;
+  type: "Hospital";
   discharge: {
     date: string;
     criteria: string;
@@ -52,7 +46,7 @@ export interface HospitalEntry extends BaseEntry {
 
 //occupational healthcare entry type
 export interface OccupationalHealthcareEntry extends BaseEntry {
-  type: EntryType.OccupationalHealthcare;
+  type: "OccupationalHealthcare";
   employerName: string;
   sickLeave?: {
     startDate: string;
@@ -78,7 +72,7 @@ export interface Patient {
 }
 
 //new patient entry type
-export type NewPatientEntry = Omit<Patient, "id" | "entries">;
+export type NewPatientEntry = Omit<Patient, "id">;
 
 
 //non sensitive patient entry type
@@ -87,5 +81,5 @@ export type NonSensitivePatientEntry = Omit<Patient, "ssn" | "entries">;
 // Define special omit for unions
 type UnionOmit<T, K extends string | number | symbol> = T extends unknown ? Omit<T, K> : never;
 // Define Entry without the 'id' property
-export type EntryFormValues = UnionOmit<Entry, "id">;
+export type EntryWithoutId = UnionOmit<Entry, "id">;
 
